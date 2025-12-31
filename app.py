@@ -14,16 +14,14 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# Configuration
-# Supabase connection string format:
-# postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:5432/postgres
 DATABASE_URL = os.environ.get("DATABASE_URL")
 API_SECRET = os.environ.get("API_SECRET")
 
 # Database context manager
 @contextmanager
 def get_db():
-    conn = psycopg2.connect(DATABASE_URL)
+    # Transaction pooler usually requires SSL
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     try:
         yield conn
         conn.commit()
